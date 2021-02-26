@@ -4,8 +4,9 @@ import React, { Component } from "react";
 import firebase from "firebase";
 
 import Button from "react-bootstrap/Button";
-import Jumbotron from "react-bootstrap/Jumbotron";
 import Container from "react-bootstrap/Container";
+import Image from "react-bootstrap/Image";
+import Navbar from "react-bootstrap/Navbar";
 
 class App extends Component {
   authRef = null;
@@ -22,9 +23,9 @@ class App extends Component {
     });
   }
 
-  componentWillUnmount() {
-    this.authRef && this.authRef.off();
-  }
+  // componentWillUnmount() {
+  //   this.authRef && this.authRef.off();
+  // }
 
   onSignInPress() {
     let provider = new firebase.auth.GoogleAuthProvider();
@@ -47,21 +48,35 @@ class App extends Component {
     let { user } = this.state;
 
     return (
-      <Container className="p-3">
-        {user == null ? null : (
-          <Button onClick={this.onSignOutPress} variant="outline-dark">
-            Log out
-          </Button>
-        )}
-        <Jumbotron>
-          <h1 className="header">Welcome To React-Bootstrap</h1>
-        </Jumbotron>
-        {user == null ? (
-          <Button onClick={this.onSignInPress} variant="outline-dark">
-            Continue with your Google account
-          </Button>
-        ) : null}
-      </Container>
+      <>
+        <Navbar bg="light" expand="lg">
+          <Navbar.Brand>Since Last</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse className="justify-content-end">
+            {user == null ? null : (
+              <>
+                <Image
+                  width="30"
+                  height="30"
+                  src={user.photoURL}
+                  roundedCircle
+                  className="d-inline-block align-top"
+                />
+                <Button onClick={this.onSignOutPress} variant="outline-dark">
+                  Log out
+                </Button>
+              </>
+            )}
+          </Navbar.Collapse>
+        </Navbar>
+        <Container className="p-3">
+          {user == null ? (
+            <Button onClick={this.onSignInPress} variant="outline-dark">
+              Continue with your Google account
+            </Button>
+          ) : null}
+        </Container>
+      </>
     );
   }
 }
