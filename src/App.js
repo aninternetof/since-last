@@ -27,8 +27,18 @@ class App extends Component {
   //   this.authRef && this.authRef.off();
   // }
 
-  onSignInPress() {
+  onGoogleSignInPress() {
     let provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider);
+  }
+
+  onGithubSignInPress() {
+    let provider = new firebase.auth.GithubAuthProvider();
+    firebase.auth().signInWithPopup(provider);
+  }
+
+  onTwitterSignInPress() {
+    let provider = new firebase.auth.TwitterAuthProvider();
     firebase.auth().signInWithPopup(provider);
   }
 
@@ -71,9 +81,20 @@ class App extends Component {
         </Navbar>
         <Container className="p-3">
           {user == null ? (
-            <Button onClick={this.onSignInPress} variant="outline-dark">
-              Continue with your Google account
-            </Button>
+            <>
+              <Button onClick={this.onGoogleSignInPress} variant="outline-dark">
+                Continue with your Google account
+              </Button>
+              <Button onClick={this.onGithubSignInPress} variant="outline-dark">
+                Continue with your Github account
+              </Button>
+              <Button
+                onClick={this.onTwitterSignInPress}
+                variant="outline-dark"
+              >
+                Continue with your Twitter account
+              </Button>
+            </>
           ) : null}
         </Container>
       </>
