@@ -3,6 +3,7 @@ import "./App.css";
 import React, { Component } from "react";
 import firebase from "firebase";
 
+import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
@@ -33,6 +34,7 @@ class App extends Component {
   }
 
   onGithubSignInPress() {
+    console.log("hey");
     let provider = new firebase.auth.GithubAuthProvider();
     firebase.auth().signInWithPopup(provider);
   }
@@ -74,21 +76,50 @@ class App extends Component {
             />
           </Navbar>
         )}
-        <Container className="p-3">
+        <Container style={{ width: "80%", marginTop: "60px" }}>
           {user == null ? (
             <>
-              <Button onClick={this.onGoogleSignInPress} variant="outline-dark">
-                Continue with your Google account
-              </Button>
-              <Button onClick={this.onGithubSignInPress} variant="outline-dark">
-                Continue with your Github account
-              </Button>
-              <Button
-                onClick={this.onTwitterSignInPress}
-                variant="outline-dark"
-              >
-                Continue with your Twitter account
-              </Button>
+              <Row style={{ marginBottom: "40px" }}>
+                <h1>
+                  Keep track of how long it has been since you did something.
+                </h1>
+              </Row>
+              <Row>
+                <h3>Continue with</h3>
+              </Row>
+              <Row>
+                <Button
+                  block
+                  size="lg"
+                  onClick={this.onGoogleSignInPress}
+                  variant="danger"
+                  className={"login-button"}
+                >
+                  Google
+                </Button>
+              </Row>
+              <Row>
+                <Button
+                  block
+                  size="lg"
+                  onClick={this.onTwitterSignInPress}
+                  variant="primary"
+                  className={"login-button"}
+                >
+                  Twitter
+                </Button>
+              </Row>
+              <Row>
+                <Button
+                  block
+                  size="lg"
+                  onClick={this.onGithubSignInPress}
+                  variant="dark"
+                  className={"login-button"}
+                >
+                  Github
+                </Button>
+              </Row>
             </>
           ) : null}
         </Container>
