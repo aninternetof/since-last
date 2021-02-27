@@ -76,7 +76,9 @@ class App extends Component {
             />
           </Navbar>
         )}
-        <Container style={{ width: "80%", marginTop: "60px" }}>
+        <Container
+          style={{ width: "80%", maxWidth: "800px", marginTop: "60px" }}
+        >
           {user == null ? (
             <>
               <Row style={{ marginBottom: "40px" }}>
