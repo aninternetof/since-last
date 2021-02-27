@@ -59,26 +59,21 @@ class App extends Component {
 
     return (
       <>
-        <Navbar bg="light" expand="lg">
-          <Navbar.Brand>Since Last</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse className="justify-content-end">
-            {user == null ? null : (
-              <>
-                <Image
-                  width="30"
-                  height="30"
-                  src={user.photoURL}
-                  roundedCircle
-                  className="d-inline-block align-top"
-                />
-                <Button onClick={this.onSignOutPress} variant="outline-dark">
-                  Log out
-                </Button>
-              </>
-            )}
-          </Navbar.Collapse>
-        </Navbar>
+        {user == null ? null : (
+          <Navbar bg="light" expand="lg" className="justify-content-end">
+            <Button onClick={this.onSignOutPress} variant="link">
+              Log Out
+            </Button>
+            <Image
+              alt=""
+              src={user.photoURL}
+              width="38"
+              height="38"
+              className="d-inline-block align-top"
+              roundedCircle
+            />
+          </Navbar>
+        )}
         <Container className="p-3">
           {user == null ? (
             <>
