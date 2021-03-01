@@ -9,11 +9,14 @@ import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
 import Navbar from "react-bootstrap/Navbar";
 
+import Item from "./components/Item";
+
 class App extends Component {
   authRef = null;
 
   state = {
     user: null,
+    items: [],
   };
 
   componentDidMount() {
@@ -21,6 +24,9 @@ class App extends Component {
       this.setState({
         user,
       });
+      if (user != null) {
+        this.loadMessages();
+      }
     });
   }
 
@@ -56,8 +62,33 @@ class App extends Component {
     return true;
   }
 
+  createItem() {
+    let db = firebase.firestore();
+    db.collection("items").add({
+      owner: firebase.auth().currentUser.uid,
+      label: "The baby ate",
+      resetTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      createdTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+  }
+
+  loadMessages() {
+    firebase
+      .firestore()
+      .collection("items")
+      .where("owner", "==", firebase.auth().currentUser.uid)
+      .onSnapshot((querySnapshot) => {
+        if (querySnapshot.metadata.hasPendingWrites) {
+          return;
+        }
+        this.setState({
+          items: querySnapshot.docs.map((i) => i.data()),
+        });
+      });
+  }
+
   render() {
-    let { user } = this.state;
+    let { user, items } = this.state;
 
     return (
       <>
@@ -123,7 +154,25 @@ class App extends Component {
                 </Button>
               </Row>
             </>
-          ) : null}
+          ) : (
+            <>
+              {items.map((item) => (
+                <>
+                  {/* <p>{item.label}</p> */}
+                  <Item {...item} />
+                </>
+              ))}
+              <Button
+                block
+                size="lg"
+                onClick={this.createItem}
+                variant="dark"
+                className={"login-button"}
+              >
+                Add Item
+              </Button>
+            </>
+          )}
         </Container>
       </>
     );
