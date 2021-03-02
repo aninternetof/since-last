@@ -1,10 +1,10 @@
 const Item = (props) => {
-  let { label, resetTimestamp } = props;
-  console.log(resetTimestamp);
+  let { label, resetTimestamp, id } = props;
   return (
     <div>
-      <p>{label}</p>
+      <p>{id}-{label}</p>
       <p>{resetTimestamp.toString()}</p>
+      <p></p>
     </div>
   );
 };

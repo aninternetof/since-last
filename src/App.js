@@ -40,7 +40,6 @@ class App extends Component {
   }
 
   onGithubSignInPress() {
-    console.log("hey");
     let provider = new firebase.auth.GithubAuthProvider();
     firebase.auth().signInWithPopup(provider);
   }
@@ -77,12 +76,13 @@ class App extends Component {
       .firestore()
       .collection("items")
       .where("owner", "==", firebase.auth().currentUser.uid)
+      // .orderBy("createdTimestamp")
       .onSnapshot((querySnapshot) => {
         if (querySnapshot.metadata.hasPendingWrites) {
           return;
         }
         this.setState({
-          items: querySnapshot.docs.map((i) => i.data()),
+          items: querySnapshot.docs,
         });
       });
   }
@@ -157,10 +157,7 @@ class App extends Component {
           ) : (
             <>
               {items.map((item) => (
-                <>
-                  {/* <p>{item.label}</p> */}
-                  <Item {...item} />
-                </>
+                <Item key={item.id} id={item.id} {...item.data()} />
               ))}
               <Button
                 block
