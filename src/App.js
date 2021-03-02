@@ -8,6 +8,8 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
 import Navbar from "react-bootstrap/Navbar";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGithub, faTwitter, faGoogle } from '@fortawesome/free-brands-svg-icons'
 
 import Item from "./components/Item";
 
@@ -129,6 +131,7 @@ class App extends Component {
                   className={"login-button"}
                 >
                   Google
+                  <FontAwesomeIcon icon={faGoogle} className="login-icon" />
                 </Button>
               </Row>
               <Row>
@@ -140,6 +143,7 @@ class App extends Component {
                   className={"login-button"}
                 >
                   Twitter
+                  <FontAwesomeIcon icon={faTwitter} className="login-icon" />
                 </Button>
               </Row>
               <Row>
@@ -151,6 +155,7 @@ class App extends Component {
                   className={"login-button"}
                 >
                   Github
+                  <FontAwesomeIcon icon={faGithub} className="login-icon" />
                 </Button>
               </Row>
             </>
