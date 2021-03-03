@@ -8,8 +8,12 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
 import Navbar from "react-bootstrap/Navbar";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub, faTwitter, faGoogle } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faGithub,
+  faTwitter,
+  faGoogle,
+} from "@fortawesome/free-brands-svg-icons";
 
 import Item from "./components/Item";
 
