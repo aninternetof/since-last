@@ -82,7 +82,7 @@ class App extends Component {
       .firestore()
       .collection("items")
       .where("owner", "==", firebase.auth().currentUser.uid)
-      // .orderBy("createdTimestamp")
+      .orderBy("createdTimestamp")
       .onSnapshot((querySnapshot) => {
         if (querySnapshot.metadata.hasPendingWrites) {
           return;
