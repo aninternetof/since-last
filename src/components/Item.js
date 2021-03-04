@@ -7,12 +7,14 @@ const Item = (props) => {
   let { label, resetTimestamp, id } = props;
   let db = firebase.firestore();
 
+  let differenceMinutes = Math.round(
+    (Date.now() - resetTimestamp.toMillis()) / 60000
+  );
+
   return (
     <div>
-      <p>
-        {id}-{label}
-      </p>
-      <p>{resetTimestamp.toString()}</p>
+      <p>{label}</p>
+      <p>{differenceMinutes} minutes ago</p>
       <Button
         onClick={() => {
           db.collection("items").doc(id).delete();
