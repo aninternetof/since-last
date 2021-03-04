@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faRedo } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
@@ -6,10 +7,20 @@ import firebase from "firebase";
 const Item = (props) => {
   let { label, resetTimestamp, id } = props;
   let db = firebase.firestore();
+  const [now, setNow] = useState(new Date());
 
-  let differenceMinutes = Math.round(
-    (Date.now() - resetTimestamp.toMillis()) / 60000
-  );
+  const tick = () => {
+    setNow(new Date());
+  };
+
+  useEffect(() => {
+    const timerID = setInterval(() => tick(), 60000);
+    return () => {
+      clearInterval(timerID);
+    };
+  });
+
+  let differenceMinutes = Math.round((now - resetTimestamp.toMillis()) / 60000);
 
   return (
     <div>
