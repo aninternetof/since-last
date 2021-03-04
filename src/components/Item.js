@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faRedo } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
 import firebase from "firebase";
 
@@ -20,6 +20,19 @@ const Item = (props) => {
         variant="danger"
       >
         <FontAwesomeIcon icon={faTrash} />
+      </Button>
+      <Button
+        onClick={() => {
+          db.collection("items").doc(id).set(
+            {
+              resetTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            },
+            { merge: true }
+          );
+        }}
+        variant="info"
+      >
+        <FontAwesomeIcon icon={faRedo} />
       </Button>
       <p></p>
     </div>
