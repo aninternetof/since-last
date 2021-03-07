@@ -20,12 +20,17 @@ const Item = (props) => {
     };
   });
 
-  let differenceMinutes = Math.round((now - resetTimestamp.toMillis()) / 60000);
+  let differenceHours = Math.floor((now - resetTimestamp.toMillis()) / 3600000);
+  let differenceMinutes =
+    Math.round((now - resetTimestamp.toMillis()) / 60000) -
+    differenceHours * 60;
 
   return (
     <div>
       <p>{label}</p>
-      <p>{differenceMinutes} minutes ago</p>
+      <p>
+        {differenceHours}h {differenceMinutes}m ago
+      </p>
       <Button
         onClick={() => {
           db.collection("items").doc(id).delete();
