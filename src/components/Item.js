@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faRedo } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faRedo,
+  faEdit,
+  faCheck,
+} from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 import firebase from "firebase";
 
 const Item = (props) => {
   let { label, resetTimestamp, id } = props;
   let db = firebase.firestore();
   const [now, setNow] = useState(new Date());
+  const [editing, setEditing] = useState(false);
+  const [labelBuffer, setLabelBuffer] = useState(label);
 
   const tick = () => {
     setNow(new Date());
@@ -20,16 +28,50 @@ const Item = (props) => {
     };
   });
 
-  let differenceHours = Math.floor((now - resetTimestamp.toMillis()) / 3600000);
-  let differenceMinutes =
-    Math.round((now - resetTimestamp.toMillis()) / 60000) -
-    differenceHours * 60;
+  const handleLabelTyping = (e) => {
+    setLabelBuffer(e.target.value.trim());
+    console.log(e.target.value.trim());
+  };
+
+  const finishEditing = () => {
+    db.collection("items").doc(id).set(
+      {
+        label: labelBuffer,
+      },
+      { merge: true }
+    );
+    setEditing(false);
+  };
+
+  const differenceMinutes = Math.round(
+    (now - resetTimestamp.toMillis()) / 60000
+  );
+  const differenceHours = Math.floor(differenceMinutes / 60);
+  const differenceRemainderMinutes = differenceMinutes % 60;
 
   return (
     <div>
-      <p>{label}</p>
+      {editing ? (
+        <Form
+          onSubmit={(e) => {
+            e.preventDefault();
+            finishEditing();
+          }}
+        >
+          <Form.Group controlId="formLabel">
+            <Form.Control
+              autoFocus
+              type="text"
+              placeholder={labelBuffer}
+              onChange={handleLabelTyping}
+            />
+          </Form.Group>
+        </Form>
+      ) : (
+        <p>{labelBuffer}</p>
+      )}
       <p>
-        {differenceHours}h {differenceMinutes}m ago
+        {differenceHours}h {differenceRemainderMinutes}m ago
       </p>
       <Button
         onClick={() => {
@@ -51,6 +93,22 @@ const Item = (props) => {
         variant="info"
       >
         <FontAwesomeIcon icon={faRedo} />
+      </Button>
+      <Button
+        onClick={() => {
+          if (editing) {
+            finishEditing();
+          } else {
+            setEditing(true);
+          }
+        }}
+        variant="secondary"
+      >
+        {editing ? (
+          <FontAwesomeIcon icon={faCheck} />
+        ) : (
+          <FontAwesomeIcon icon={faEdit} />
+        )}
       </Button>
       <p></p>
     </div>
