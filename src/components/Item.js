@@ -43,9 +43,10 @@ const Item = (props) => {
     setEditing(false);
   };
 
-  const differenceMinutes = Math.round(
-    (now - resetTimestamp.toMillis()) / 60000
-  );
+  let differenceMinutes = Math.round((now - resetTimestamp.toMillis()) / 60000);
+  if (differenceMinutes < 0) {
+    differenceMinutes = 0; // not sure why I need this...
+  }
   const differenceHours = Math.floor(differenceMinutes / 60);
   const differenceRemainderMinutes = differenceMinutes % 60;
 
