@@ -5,17 +5,25 @@ import {
   faRedo,
   faEdit,
   faCheck,
+  faUserMinus,
+  faPlus,
+  faShareSquare,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import firebase from "firebase";
 
 const Item = (props) => {
-  let { label, resetTimestamp, id } = props;
+  let { label, resetTimestamp, id, sharedWith } = props;
+  if (sharedWith == null) {
+    sharedWith = [];
+  }
   let db = firebase.firestore();
   const [now, setNow] = useState(new Date());
-  const [editing, setEditing] = useState(false);
+  const [editingLabel, setEditingLabel] = useState(false);
+  const [editingSharing, setEditingSharing] = useState(false);
   const [labelBuffer, setLabelBuffer] = useState(label);
+  const [sharingBuffer, setSharingBuffer] = useState("");
 
   const tick = () => {
     setNow(new Date());
@@ -30,7 +38,10 @@ const Item = (props) => {
 
   const handleLabelTyping = (e) => {
     setLabelBuffer(e.target.value.trim());
-    console.log(e.target.value.trim());
+  };
+
+  const handleSharingTyping = (e) => {
+    setSharingBuffer(e.target.value.trim());
   };
 
   const finishEditing = () => {
@@ -40,7 +51,18 @@ const Item = (props) => {
       },
       { merge: true }
     );
-    setEditing(false);
+    setEditingLabel(false);
+  };
+
+  const submitSharing = () => {
+    sharedWith.push(sharingBuffer);
+    db.collection("items").doc(id).set(
+      {
+        sharedWith: sharedWith,
+      },
+      { merge: true }
+    );
+    setSharingBuffer("");
   };
 
   let differenceMinutes = Math.round((now - resetTimestamp.toMillis()) / 60000);
@@ -52,7 +74,7 @@ const Item = (props) => {
 
   return (
     <div>
-      {editing ? (
+      {editingLabel ? (
         <Form
           onSubmit={(e) => {
             e.preventDefault();
@@ -63,13 +85,13 @@ const Item = (props) => {
             <Form.Control
               autoFocus
               type="text"
-              placeholder={labelBuffer}
+              placeholder={label}
               onChange={handleLabelTyping}
             />
           </Form.Group>
         </Form>
       ) : (
-        <p>{labelBuffer}</p>
+        <p>{label}</p>
       )}
       <p>
         {differenceHours}h {differenceRemainderMinutes}m ago
@@ -86,7 +108,8 @@ const Item = (props) => {
         onClick={() => {
           db.collection("items").doc(id).set(
             {
-              resetTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              // resetTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              resetTimestamp: new Date(),
             },
             { merge: true }
           );
@@ -97,21 +120,81 @@ const Item = (props) => {
       </Button>
       <Button
         onClick={() => {
-          if (editing) {
+          if (editingLabel) {
             finishEditing();
           } else {
-            setEditing(true);
+            setEditingLabel(true);
           }
         }}
         variant="secondary"
       >
-        {editing ? (
+        {editingLabel ? (
           <FontAwesomeIcon icon={faCheck} />
         ) : (
           <FontAwesomeIcon icon={faEdit} />
         )}
       </Button>
-      <p></p>
+      <Button
+        onClick={() => {
+          if (editingSharing) {
+            setEditingSharing(false);
+          } else {
+            setEditingSharing(true);
+          }
+        }}
+        variant="warning"
+      >
+        {editingSharing ? (
+          <FontAwesomeIcon icon={faCheck} />
+        ) : (
+          <FontAwesomeIcon icon={faShareSquare} />
+        )}
+      </Button>
+      {editingSharing ? (
+        sharedWith.map((person) => (
+          <p key={person}>
+            {person}
+            <Button
+              onClick={() => {
+                db.collection("items")
+                  .doc(id)
+                  .set(
+                    {
+                      sharedWith: sharedWith.filter((item) => item !== person),
+                    },
+                    { merge: true }
+                  );
+              }}
+              variant="warning"
+            >
+              <FontAwesomeIcon icon={faUserMinus} />
+            </Button>
+          </p>
+        ))
+      ) : (
+        <></>
+      )}
+      {editingSharing ? (
+        <Form
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <Form.Group controlId="formLabel">
+            <Form.Control
+              type="email"
+              placeholder="john@doe.com"
+              value={sharingBuffer}
+              onChange={handleSharingTyping}
+            />
+          </Form.Group>
+          <Button variant="primary" type="submit" onClick={submitSharing}>
+            <FontAwesomeIcon icon={faPlus} />
+          </Button>
+        </Form>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

@@ -23,6 +23,7 @@ class App extends Component {
   state = {
     user: null,
     items: [],
+    sharedItems: [],
   };
 
   componentDidMount() {
@@ -72,8 +73,11 @@ class App extends Component {
     db.collection("items").add({
       owner: firebase.auth().currentUser.uid,
       label: "The baby ate",
-      resetTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      createdTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      // resetTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      // createdTimestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      resetTimestamp: new Date(),
+      createdTimestamp: new Date(),
+      sharedWith: [],
     });
   }
 
@@ -84,17 +88,27 @@ class App extends Component {
       .where("owner", "==", firebase.auth().currentUser.uid)
       .orderBy("createdTimestamp")
       .onSnapshot((querySnapshot) => {
+        this.setState({
+          items: querySnapshot.docs,
+        });
+      });
+    firebase
+      .firestore()
+      .collection("items")
+      .where("sharedWith", "array-contains", firebase.auth().currentUser.email)
+      .orderBy("createdTimestamp")
+      .onSnapshot((querySnapshot) => {
         if (querySnapshot.metadata.hasPendingWrites) {
           return;
         }
         this.setState({
-          items: querySnapshot.docs,
+          sharedItems: querySnapshot.docs,
         });
       });
   }
 
   render() {
-    let { user, items } = this.state;
+    let { user, items, sharedItems } = this.state;
 
     return (
       <>
@@ -177,6 +191,9 @@ class App extends Component {
               >
                 Add Item
               </Button>
+              {sharedItems.map((item) => (
+                <Item key={item.id} id={item.id} {...item.data()} />
+              ))}
             </>
           )}
         </Container>
