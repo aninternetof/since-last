@@ -1,9 +1,12 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if
-          request.time < timestamp.date(2021, 3, 26);
+    match /items/{item} {
+      function ownsOrSharedWith() {
+        return request.auth.uid != null && (request.auth.uid == resource.data.owner || request.auth.token.email in resource.data.sharedWith);
+      }
+      allow read, write: if ownsOrSharedWith();
+      allow create: if request.auth != null;
     }
   }
 }
